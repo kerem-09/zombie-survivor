@@ -13,16 +13,10 @@ public class UpgradeManager : MonoBehaviour
 
         int c = GameManager.Instance.coinCount;
 
-        if (!ropeUnlocked && GameManager.Instance.coinCount >= 20)
-        {
-            ropeUnlocked = true;
-
-            if (player.GetComponent<RopeAttack>() == null)
-                player.AddComponent<RopeAttack>();
-        }
+        
 
 
-        // 50 coin -> AutoShooter bekleme azal?r (daha h?zl? atar)
+        // 50 coin -> AutoShooter bekleme azalýr (daha hýzlý atar)
         if (!fireRateUpgraded && c >= 50)
         {
             fireRateUpgraded = true;
@@ -30,7 +24,7 @@ public class UpgradeManager : MonoBehaviour
             AutoShooter shooter = player.GetComponent<AutoShooter>();
             if (shooter != null)
             {
-                shooter.fireRate *= 1.25f; // %25 daha h?zl? ate?
+                shooter.fireRate *= 1.25f; // %25 daha hýzlý ateþ
 
             }
         }

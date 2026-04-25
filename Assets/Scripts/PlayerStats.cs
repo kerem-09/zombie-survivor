@@ -25,7 +25,6 @@ public class PlayerStats : MonoBehaviour
     public void UnlockRope()
     {
         if (GetComponent<RopeAttack>() != null) return;
-
         gameObject.AddComponent<RopeAttack>();
     }
 
@@ -57,10 +56,17 @@ public class PlayerStats : MonoBehaviour
         GameObject knife = new GameObject("Knife");
         knife.transform.SetParent(transform);
         knife.transform.localPosition = Vector3.zero;
-        knife.transform.localScale = new Vector3(0.4f, 0.4f, 1f);
+        knife.transform.localScale = new Vector3(0.35f, 0.35f, 1f);
 
         SpriteRenderer sr = knife.AddComponent<SpriteRenderer>();
-        sr.sprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/Knob.psd");
+
+        // Player'ýn sprite'ýný kopyala
+        SpriteRenderer playerSR = GetComponent<SpriteRenderer>();
+        if (playerSR != null)
+            sr.sprite = playerSR.sprite;
+
+        sr.color = Color.yellow;      // býçak sarý görünsün
+        sr.sortingOrder = 10;         // önde dursun
 
         CircleCollider2D col = knife.AddComponent<CircleCollider2D>();
         col.isTrigger = true;
