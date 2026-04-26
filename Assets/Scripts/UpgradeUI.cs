@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
+using System.Collections.Generic;
 
 public class UpgradeUI : MonoBehaviour
 {
@@ -11,6 +13,18 @@ public class UpgradeUI : MonoBehaviour
     public Button option3;
 
     public PlayerStats playerStats;
+
+    class UpgradeOption
+    {
+        public string title;
+        public Action action;
+
+        public UpgradeOption(string title, Action action)
+        {
+            this.title = title;
+            this.action = action;
+        }
+    }
 
     void Start()
     {
@@ -25,68 +39,103 @@ public class UpgradeUI : MonoBehaviour
         Time.timeScale = 0f;
         panel.SetActive(true);
 
+        List<UpgradeOption> upgrades = GetAvailableUpgrades();
+
+        Shuffle(upgrades);
+
+        SetButton(option1, upgrades[0]);
+        SetButton(option2, upgrades[1]);
+        SetButton(option3, upgrades[2]);
+    }
+
+    List<UpgradeOption> GetAvailableUpgrades()
+    {
+        List<UpgradeOption> list = new List<UpgradeOption>();
+
         bool hasRope = playerStats.GetComponent<RopeAttack>() != null;
-        bool hasKnife = playerStats.transform.Find("Knife") != null;
+        bool hasKnife = playerStats.knifeLevel > 0;
 
-        SetButton(option1, "Daha Hýzlý Ateþ +25%", () =>
+        list.Add(new UpgradeOption("Daha Hýzlý Ateþ +25%", () =>
             playerStats.Upgrade_FireRate(1.25f)
-        );
+        ));
 
-        if (!hasRope && !hasKnife)
+        list.Add(new UpgradeOption("Menzil Artýr +1", () =>
+            playerStats.Upgrade_Range(1f)
+        ));
+
+        if (!hasRope)
         {
-            SetButton(option2, "Yeni Silah: Halat", () =>
+            list.Add(new UpgradeOption("Yeni Silah: Halat", () =>
                 playerStats.UnlockRope()
-            );
-
-            SetButton(option3, "Yeni Silah: Dönen Býçak", () =>
-                playerStats.UnlockKnife()
-            );
-        }
-        else if (hasRope && !hasKnife)
-        {
-            SetButton(option2, "Halat Hasarý +1", () =>
-                playerStats.Upgrade_RopeDamage(1)
-            );
-
-            SetButton(option3, "Yeni Silah: Dönen Býçak", () =>
-                playerStats.UnlockKnife()
-            );
-        }
-        else if (!hasRope && hasKnife)
-        {
-            SetButton(option2, "Yeni Silah: Halat", () =>
-                playerStats.UnlockRope()
-            );
-
-            SetButton(option3, "Býçak Hasarý +1", () =>
-                playerStats.Upgrade_KnifeDamage(1)
-            );
+            ));
         }
         else
         {
-            SetButton(option2, "Halat Hasarý +1", () =>
+            list.Add(new UpgradeOption("Halat Hasarý +1", () =>
                 playerStats.Upgrade_RopeDamage(1)
-            );
+            ));
 
-            SetButton(option3, "Býçak Hasarý +1", () =>
-                playerStats.Upgrade_KnifeDamage(1)
-            );
+            list.Add(new UpgradeOption("Halat Hýzý +10%", () =>
+                playerStats.Upgrade_RopeInterval(0.9f)
+            ));
+
+            list.Add(new UpgradeOption("Halat Alaný +", () =>
+                playerStats.Upgrade_RopeWidth(0.15f)
+            ));
         }
+
+        if (!hasKnife)
+        {
+            list.Add(new UpgradeOption("Yeni Silah: Dönen Býçak", () =>
+                playerStats.UnlockKnife()
+            ));
+        }
+        else
+        {
+            if (playerStats.knifeLevel < 5)
+            {
+                list.Add(new UpgradeOption("Býçak Sayýsý Artýr", () =>
+                    playerStats.Upgrade_KnifeCount()
+                ));
+            }
+
+            list.Add(new UpgradeOption("Býçak Hasarý +1", () =>
+                playerStats.Upgrade_KnifeDamage(1)
+            ));
+
+            list.Add(new UpgradeOption("Býçak Hýzý +10%", () =>
+                playerStats.Upgrade_KnifeSpeed(1.1f)
+            ));
+        }
+
+        return list;
     }
 
-    void SetButton(Button button, string text, System.Action action)
+    void SetButton(Button button, UpgradeOption upgrade)
     {
-        TMP_Text t = button.GetComponentInChildren<TMP_Text>();
+        TMP_Text text = button.GetComponentInChildren<TMP_Text>();
 
-        if (t != null)
-            t.text = text;
+        if (text != null)
+            text.text = upgrade.title;
 
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() =>
         {
-            action.Invoke();
+            upgrade.action.Invoke();
             CloseUpgrade();
         });
+    }
+
+    void Shuffle(List<UpgradeOption> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(i, list.Count);
+
+            UpgradeOption temp = list[i];
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
+        }
     }
 
     void CloseUpgrade()

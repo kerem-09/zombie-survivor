@@ -5,6 +5,7 @@ public class OrbitWeapon : MonoBehaviour
     public float radius = 2f;
     public float speed = 200f;
     public int damage = 1;
+    public float angleOffset = 0f;
 
     float angle;
 
@@ -12,7 +13,7 @@ public class OrbitWeapon : MonoBehaviour
     {
         angle += speed * Time.deltaTime;
 
-        float rad = angle * Mathf.Deg2Rad;
+        float rad = (angle + angleOffset) * Mathf.Deg2Rad;
         float x = Mathf.Cos(rad) * radius;
         float y = Mathf.Sin(rad) * radius;
 
