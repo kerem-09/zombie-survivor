@@ -63,6 +63,16 @@ public class UpgradeUI : MonoBehaviour
             playerStats.Upgrade_Range(1f)
         ));
 
+        // Hareket hýzý yükseltmesi sadece 1.15x olabilir
+        list.Add(new UpgradeOption("Hareket Hýzý +10%", () =>
+            playerStats.Upgrade_MoveSpeed(1.10f)
+        ));
+
+        // Coin magnet yükseltmesi olabilir
+        list.Add(new UpgradeOption("Mýknatýs Alaný +", () =>
+            playerStats.Upgrade_CoinMagnet(1f)
+        ));
+
         if (!hasRope)
         {
             list.Add(new UpgradeOption("Yeni Silah: Halat", () =>
@@ -82,6 +92,15 @@ public class UpgradeUI : MonoBehaviour
             list.Add(new UpgradeOption("Halat Alaný +", () =>
                 playerStats.Upgrade_RopeWidth(0.15f)
             ));
+            // Halat sayýsý yükseltmesi sadece 2'ye kadar olabilir
+            RopeAttack rope = playerStats.GetComponent<RopeAttack>();
+
+            if (rope != null && rope.ropeCount < 2)
+            {
+                list.Add(new UpgradeOption("Çift Halat", () =>
+                    playerStats.Upgrade_RopeCount()
+                ));
+            }
         }
 
         if (!hasKnife)

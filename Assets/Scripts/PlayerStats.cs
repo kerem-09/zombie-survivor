@@ -42,6 +42,13 @@ public class PlayerStats : MonoBehaviour
         if (rope != null)
             rope.interval *= mult;
     }
+    // Halat sayýsýný 2'ye yükseltir (çift halat)
+    public void Upgrade_RopeCount()
+    {
+        RopeAttack rope = GetComponent<RopeAttack>();
+        if (rope != null && rope.ropeCount < 2)
+            rope.ropeCount = 2;
+    }
 
     public void Upgrade_RopeWidth(float add)
     {
@@ -124,6 +131,14 @@ public class PlayerStats : MonoBehaviour
             ow.damage += add;
     }
 
+    public void Upgrade_MoveSpeed(float mult)
+    {
+        PlayerMovement movement = GetComponent<PlayerMovement>();
+
+        if (movement != null)
+            movement.moveSpeed *= mult;
+    }
+
     public void Upgrade_KnifeSpeed(float mult)
     {
         Transform knife = transform.Find("Knife");
@@ -132,5 +147,10 @@ public class PlayerStats : MonoBehaviour
         OrbitWeapon ow = knife.GetComponent<OrbitWeapon>();
         if (ow != null)
             ow.speed *= mult;
+    }
+    public void Upgrade_CoinMagnet(float add)
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.UpgradeCoinMagnet(add);
     }
 }

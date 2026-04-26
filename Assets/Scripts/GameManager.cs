@@ -45,4 +45,12 @@ public class GameManager : MonoBehaviour
             OnLevelUp?.Invoke();
         }
     }
+    // Coin magnet özellikleri
+    public float coinMagnetRange = 1.5f;
+
+    public void UpgradeCoinMagnet(float add)
+    {
+        coinMagnetRange += add;
+    }
+
 }
