@@ -35,7 +35,7 @@ public class RopeAttack : MonoBehaviour
         FireRope(new Vector2(-1f, 0.6f).normalized, damagedEnemies);
 
         if (ropeCount >= 2)
-            FireRope(new Vector2(1f, 0.6f).normalized, damagedEnemies);
+            FireRope(new Vector2(1f, -0.6f).normalized, damagedEnemies);
     }
 
     void FireRope(Vector2 dir, HashSet<EnemyHealth> damagedEnemies)

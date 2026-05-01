@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2412799319228929077}
   - component: {fileID: 3743861733896507050}
   - component: {fileID: 7813663136372029807}
+  - component: {fileID: 3389473150054605806}
   m_Layer: 0
   m_Name: Enemy_zigzag
   m_TagString: Enemy
@@ -167,3 +168,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFollow
   moveSpeed: 2.8
+--- !u!114 &3389473150054605806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162615237396310205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9a4006340e084048aa4ac3e4550adef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDamage
+  damage: 12
+  hitCooldown: 1
