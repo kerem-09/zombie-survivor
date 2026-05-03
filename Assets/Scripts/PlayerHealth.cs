@@ -17,8 +17,7 @@ public class PlayerHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Debug.Log("GAME OVER");
-            Time.timeScale = 0f;
+            GameManager.Instance.GameOver();
         }
     }
 }
