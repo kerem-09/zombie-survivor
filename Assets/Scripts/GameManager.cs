@@ -14,14 +14,6 @@ public class GameManager : MonoBehaviour
     // OYUN SÜRESÝ
     public float gameTime = 0f;
 
-    void Update()
-    {
-        if (Time.timeScale > 0f)
-        {
-            gameTime += Time.deltaTime;
-        }
-    }
-
     // LEVEL
     public int level = 1;
     public int xp = 0;
@@ -33,6 +25,14 @@ public class GameManager : MonoBehaviour
 
     // UI
     public GameObject gameOverPanel;
+    public TMP_Text gameOverStatsText;
+
+    // PLAYER
+    public PlayerStats playerStats;
+
+    // BEST SCORE
+    int bestKill;
+    float bestTime;
 
     void Awake()
     {
@@ -41,47 +41,91 @@ public class GameManager : MonoBehaviour
         else
             Destroy(gameObject);
 
-        Time.timeScale = 1f; // GameScene açýlýnca oyun direkt baþlasýn
-    }
-    // GAME OVER
-    public TMP_Text gameOverStatsText;
-    public PlayerStats playerStats;
+        Time.timeScale = 1f;
 
+        // kayýtlarý yükle
+        bestKill = PlayerPrefs.GetInt("BestKill", 0);
+        bestTime = PlayerPrefs.GetFloat("BestTime", 0f);
+    }
+
+    void Update()
+    {
+        if (Time.timeScale > 0f)
+        {
+            gameTime += Time.deltaTime;
+        }
+    }
+    // OYUN BÝTTÝ MÝ?
+    public bool isGameOver = false;
+    // -------------------------
+    // GAME OVER
+    // -------------------------
     public void GameOver()
     {
+        // OYUN BÝTTÝ
+        isGameOver = true;
+        // REKOR KONTROL
+        if (killCount > bestKill)
+        {
+            bestKill = killCount;
+            PlayerPrefs.SetInt("BestKill", bestKill);
+        }
+
+        if (gameTime > bestTime)
+        {
+            bestTime = gameTime;
+            PlayerPrefs.SetFloat("BestTime", bestTime);
+        }
+
+        PlayerPrefs.Save();
+
+        // PANEL AÇ
         if (gameOverPanel != null)
             gameOverPanel.SetActive(true);
 
+        // SÜRE HESAPLA
+        int minutes = Mathf.FloorToInt(gameTime / 60f);
+        int seconds = Mathf.FloorToInt(gameTime % 60f);
+
+        int bestMin = Mathf.FloorToInt(bestTime / 60f);
+        int bestSec = Mathf.FloorToInt(bestTime % 60f);
+
+        // YETENEKLER
+        string abilities = "";
+
+        if (playerStats != null)
+        {
+            if (playerStats.GetComponent<RopeAttack>() != null)
+                abilities += "Halat ";
+
+            if (playerStats.knifeLevel > 0)
+                abilities += "Dönen Býçak ";
+        }
+
+        if (abilities == "")
+            abilities = "Yok";
+
+        // UI TEXT
         if (gameOverStatsText != null)
         {
-            int minutes = Mathf.FloorToInt(gameTime / 60f);
-            int seconds = Mathf.FloorToInt(gameTime % 60f);
-
-            string abilities = "";
-
-            if (playerStats != null)
-            {
-                if (playerStats.GetComponent<RopeAttack>() != null)
-                    abilities += "Halat ";
-
-                if (playerStats.knifeLevel > 0)
-                    abilities += "Dönen Býçak ";
-            }
-
-            if (abilities == "")
-                abilities = "Yok";
-
             gameOverStatsText.text =
                 $"Süre: {minutes:00}:{seconds:00}\n" +
                 $"Kill: {killCount}\n" +
                 $"Coin: {coinCount}\n" +
                 $"Level: {level}\n" +
-                $"Yetenekler: {abilities}";
+                $"Yetenekler: {abilities}\n\n" +
+                $"En Ýyi Süre: {bestMin:00}:{bestSec:00}\n" +
+                $"En Ýyi Kill: {bestKill}";
         }
 
         Time.timeScale = 0f;
+        
+        
     }
 
+    // -------------------------
+    // GAME FLOW
+    // -------------------------
     public void RestartGame()
     {
         Time.timeScale = 1f;
@@ -94,6 +138,9 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene");
     }
 
+    // -------------------------
+    // GAMEPLAY
+    // -------------------------
     public void AddKill()
     {
         killCount++;
@@ -119,6 +166,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // -------------------------
+    // UPGRADES
+    // -------------------------
     public void UpgradeCoinMagnet(float add)
     {
         coinMagnetRange += add;

@@ -20,4 +20,13 @@ public class PlayerHealth : MonoBehaviour
             GameManager.Instance.GameOver();
         }
     }
+
+    public void HealPercent(float percent)
+    {
+        int healAmount = Mathf.RoundToInt(maxHealth * percent);
+        currentHealth += healAmount;
+
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
+    }
 }
