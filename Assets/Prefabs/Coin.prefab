@@ -142,5 +142,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinPickup
   value: 1
-  magnetRange: 1.5
   magnetSpeed: 6
+  collectSound: {fileID: 8300000, guid: ad2ba971186caa841bee40ca07095285, type: 3}
